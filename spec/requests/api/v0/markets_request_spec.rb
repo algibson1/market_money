@@ -8,49 +8,93 @@ RSpec.describe "Markets API" do
 
     expect(response).to be_successful
 
-    markets = JSON.parse(response.body)
+    markets = JSON.parse(response.body, symbolize_names: true)
   
-    expect(markets["data"].count).to eq(5)
+    expect(markets[:data].count).to eq(5)
 
-    markets["data"].each do |market|
-      expect(market).to have_key("id")
-      expect(market["id"]).to be_an(Integer)
+    markets[:data].each do |market|
+      expect(market).to have_key(:id)
+      expect(market[:id]).to be_a(String)
 
-      expect(market).to have_key("name")
-      expect(market["name"]).to be_a(String)
+      expect(market).to have_key(:type)
+      expect(market[:type]).to eq("market")
 
-      expect(market).to have_key("street")
-      expect(market["street"]).to be_a(String)
+      expect(market).to have_key(:attributes)
+      expect(market[:attributes]).to be_a(Hash)
 
-      expect(market).to have_key("city")
-      expect(market["city"]).to be_a(String)
+      expect(market[:attributes]).to have_key(:name)
+      expect(market[:attributes][:name]).to be_a(String)
 
-      expect(market).to have_key("county")
-      expect(market["county"]).to be_a(String)
+      expect(market[:attributes]).to have_key(:street)
+      expect(market[:attributes][:street]).to be_a(String)
 
-      expect(market).to have_key("state")
-      expect(market["state"]).to be_a(String)
+      expect(market[:attributes]).to have_key(:city)
+      expect(market[:attributes][:city]).to be_a(String)
 
-      expect(market).to have_key("zip")
-      expect(market["zip"]).to be_a(String)
+      expect(market[:attributes]).to have_key(:county)
+      expect(market[:attributes][:county]).to be_a(String)
 
-      expect(market).to have_key("lat")
-      expect(market["lat"]).to be_a(String)
+      expect(market[:attributes]).to have_key(:state)
+      expect(market[:attributes][:state]).to be_a(String)
 
-      expect(market).to have_key("lon")
-      expect(market["lon"]).to be_a(String)
+      expect(market[:attributes]).to have_key(:zip)
+      expect(market[:attributes][:zip]).to be_a(String)
 
-      expect(market).to have_key("vendor_count")
-      expect(market["vendor_count"]).to be_an(Integer)
+      expect(market[:attributes]).to have_key(:lat)
+      expect(market[:attributes][:lat]).to be_a(String)
+
+      expect(market[:attributes]).to have_key(:lon)
+      expect(market[:attributes][:lon]).to be_a(String)
+
+      expect(market[:attributes]).to have_key(:vendor_count)
+      expect(market[:attributes][:vendor_count]).to be_an(Integer)
     end
   end
 
+  it "returns one market by id" do
+    id = create(:market).id
 
-  xit "returns one market by id" do
-    create(:market, id: 35)
-
-    get "/api/v0/markets/35"
+    get "/api/v0/markets/#{id}"
 
     expect(response).to be_successful
+
+    nested_response = JSON.parse(response.body, symbolize_names: true)
+    market = nested_response[:data]
+
+    expect(market).to have_key(:id)
+    expect(market[:id]).to eq("#{id}")
+
+    expect(market).to have_key(:type)
+    expect(market[:type]).to eq("market")
+
+    expect(market).to have_key(:attributes)
+    expect(market[:attributes]).to be_a(Hash)
+
+    expect(market[:attributes]).to have_key(:name)
+    expect(market[:attributes][:name]).to be_a(String)
+
+    expect(market[:attributes]).to have_key(:street)
+    expect(market[:attributes][:street]).to be_a(String)
+
+    expect(market[:attributes]).to have_key(:city)
+    expect(market[:attributes][:city]).to be_a(String)
+
+    expect(market[:attributes]).to have_key(:county)
+    expect(market[:attributes][:county]).to be_a(String)
+
+    expect(market[:attributes]).to have_key(:state)
+    expect(market[:attributes][:state]).to be_a(String)
+
+    expect(market[:attributes]).to have_key(:zip)
+    expect(market[:attributes][:zip]).to be_a(String)
+
+    expect(market[:attributes]).to have_key(:lat)
+    expect(market[:attributes][:lat]).to be_a(String)
+
+    expect(market[:attributes]).to have_key(:lon)
+    expect(market[:attributes][:lon]).to be_a(String)
+
+    expect(market[:attributes]).to have_key(:vendor_count)
+    expect(market[:attributes][:vendor_count]).to be_an(Integer)
   end
 end
