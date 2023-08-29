@@ -11,6 +11,6 @@ class Market < ApplicationRecord
                         :lon
 
   def vendor_count
-
+    vendors.count
   end
 end
