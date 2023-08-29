@@ -4,11 +4,14 @@ RSpec.describe MarketSerializer do
   it "formats markets with all attributes + vendor_count" do
     markets = create_list(:market, 5)
     
-    formatted = MarketSerializer.format_markets(markets)
+    serialized_response = MarketSerializer.new(Market.all)
 
-    formatted.each do |market|
+    formatted = JSON.parse(serialized_response.to_json, symbolize_names: true)
+    expect(formatted[:data].count).to eq(5)
+
+    formatted[:data].each do |market|
       expect(market).to have_key(:id)
-      expect(market[:id]).to be_an(Integer)
+      expect(market[:id]).to be_a(String)
 
       expect(market).to have_key(:type)
       expect(market[:type]).to eq("market")
@@ -47,10 +50,14 @@ RSpec.describe MarketSerializer do
 
   it "can also format just one market" do
     unformatted_market = create(:market)
-    market = MarketSerializer.format_market(unformatted_market)
+
+    serialized_response = MarketSerializer.new(Market.find(unformatted_market.id))
+
+    formatted = JSON.parse(serialized_response.to_json, symbolize_names: true)
+    market = formatted[:data]
 
     expect(market).to have_key(:id)
-    expect(market[:id]).to eq(unformatted_market.id)
+    expect(market[:id]).to eq("#{unformatted_market.id}")
 
     expect(market).to have_key(:type)
     expect(market[:type]).to eq("market")
