@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   # root "articles#index"
   namespace :api do
     namespace :v0 do
-      resources :markets, only: [:show]
+      resources :markets, only: [:index, :show]
     end
   end
 end
