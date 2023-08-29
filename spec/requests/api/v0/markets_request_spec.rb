@@ -7,7 +7,7 @@ RSpec.describe "Markets API" do
     get "/api/v0/markets" 
 
     expect(response).to be_successful
-
+    expect(response.status).to eq(200)
     markets = JSON.parse(response.body, symbolize_names: true)
   
     expect(markets[:data].count).to eq(5)
@@ -57,7 +57,7 @@ RSpec.describe "Markets API" do
     get "/api/v0/markets/#{id}"
 
     expect(response).to be_successful
-
+    expect(response.status).to eq(200)
     nested_response = JSON.parse(response.body, symbolize_names: true)
     market = nested_response[:data]
 
@@ -96,5 +96,20 @@ RSpec.describe "Markets API" do
 
     expect(market[:attributes]).to have_key(:vendor_count)
     expect(market[:attributes][:vendor_count]).to be_an(Integer)
+  end
+
+  it "throws an error message if an invalid market id is passed" do
+    get "/api/v0/markets/534"
+
+    expect(response.status).to eq(404)
+    
+    error = JSON.parse(response.body, symbolize_names: true)
+    
+    expect(error).to have_key(:errors)
+    expect(error[:errors]).to be_an(Array)
+    expect(error[:errors].count).to eq(1)
+    expect(error[:errors].first).to be_a(Hash)
+    expect(error[:errors].first).to have_key(:detail)
+    expect(error[:errors].first[:detail]).to eq("Couldn't find Market with 'id'=534")
   end
 end
