@@ -21,6 +21,15 @@ class Api::V0::MarketVendorsController < ApplicationController
       end
   end
 
+  def destroy
+    market_vendor = MarketVendor.find_by(market_vendor_params)
+    if market_vendor.nil?
+      render json: ErrorSerializer.no_association(market_vendor_params.to_hash), status: :not_found
+    else
+      market_vendor.delete
+    end
+  end
+
   private
   def market_vendor_params
     params.permit(:market_id, :vendor_id)
