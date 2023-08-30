@@ -7,9 +7,12 @@ class Api::V0::VendorsController < ApplicationController
 
   def create
     vendor = Vendor.new(vendor_params)
-    if vendor.save
+    if ["true", "false"].include?(params[:credit_accepted]) && vendor.save
       render json: VendorSerializer.new(vendor), status: :created
-    else 
+    elsif !["true", "false"].include?(params[:credit_accepted])
+      vendor = Vendor.create(vendor_params_nix_credit_accepted)
+      render json: ErrorSerializer.invalid(vendor.errors), status: :bad_request
+    else
       render json: ErrorSerializer.invalid(vendor.errors), status: :bad_request
     end
   end
@@ -18,7 +21,7 @@ class Api::V0::VendorsController < ApplicationController
     @vendor.update(vendor_params)
     if @vendor.save
       render json: VendorSerializer.new(@vendor)
-    else 
+    else
       render json: ErrorSerializer.invalid(@vendor.errors), status: :bad_request
     end
   end
@@ -35,5 +38,9 @@ class Api::V0::VendorsController < ApplicationController
 
   def vendor_params
     params.permit(:name, :description, :contact_name, :contact_phone, :credit_accepted)
+  end
+
+  def vendor_params_nix_credit_accepted
+    params.permit(:name, :description, :contact_name, :contact_phone)
   end
 end
