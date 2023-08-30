@@ -193,4 +193,55 @@ RSpec.describe "Market Vendor Requests" do
       expect(message).to eq({errors: [{detail: "Validation failed: Market vendor association between market with 'id'=#{market.id} and vendor with 'id'=#{vendor.id} already exists"}]})
     end
   end
+
+  context "delete endpoint" do
+    it "can delete a market_vendor association" do
+      market_vendor = create(:market_vendor)
+      market = Market.find(market_vendor.market_id)
+      vendor = Vendor.find(market_vendor.vendor_id)
+
+      get "/api/v0/markets/#{market.id}/vendors"
+      data = JSON.parse(response.body, symbolize_names: true)
+      expect(data[:data].count).to eq(1)
+      expect(data[:data].first[:id]).to eq("#{vendor.id}")
+
+      delete "/api/v0/market_vendors", params: {
+        market_id: market.id,
+        vendor_id: vendor.id
+      }
+
+      expect(response).to be_successful
+      expect(response.status).to eq(204)
+      expect(response.body).to eq("")
+
+      get "/api/v0/markets/#{market.id}/vendors"
+      data = JSON.parse(response.body, symbolize_names: true)
+      expect(data[:data].count).to eq(0)
+      expect(Market.all).to include(market)
+      expect(Vendor.all).to include(vendor)
+      expect(MarketVendor.all).to_not include(market_vendor)
+    end
+
+
+    it "returns an error if either id is invalid" do
+      vendor = create(:vendor)
+
+      delete "/api/v0/market_vendors", params: {
+        market_id: 543,
+        vendor_id: vendor.id
+      }
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      expected = {
+        errors: [
+              {detail: "No association exists between market with 'id'=543 AND vendor with 'id'=#{vendor.id}"}
+            ]
+          }
+
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(error).to eq(expected)
+    end
+  end
 end
