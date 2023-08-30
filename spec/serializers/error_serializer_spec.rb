@@ -36,4 +36,30 @@ RSpec.describe ErrorSerializer do
 
     expect(ErrorSerializer.invalid(vendor.errors)).to eq(expected)
   end
+
+  it "formats errors when a market_vendor association doesn't exist" do
+    market_vendor = MarketVendor.find_by(market_id: 43, vendor_id: 76)
+
+    expected = {
+      errors: [
+            {
+              detail: "No association exists between market with 'id'=43 AND vendor with 'id'=76"
+            }
+          ]
+        }
+
+    expect(ErrorSerializer.no_association({"market_id" => 43, "vendor_id" => 76})).to eq(expected)
+  end
+
+  it "formats errors when a market_vendor request is missing an id" do
+    expected = {
+      errors: [
+            {
+              detail: "No association exists between market with 'id'=N/A AND vendor with 'id'=N/A"
+            }
+          ]
+        }
+
+    expect(ErrorSerializer.no_association({})).to eq(expected)
+  end
 end
