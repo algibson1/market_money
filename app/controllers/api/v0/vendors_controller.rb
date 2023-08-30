@@ -1,5 +1,5 @@
 class Api::V0::VendorsController < ApplicationController
-  before_action :find_vendor, only: [:show, :update]
+  before_action :find_vendor, only: [:show, :update, :destroy]
 
   def show
     render json: VendorSerializer.new(@vendor)
@@ -24,6 +24,10 @@ class Api::V0::VendorsController < ApplicationController
     else
       render json: ErrorSerializer.invalid(@vendor.errors), status: :bad_request
     end
+  end
+
+  def destroy
+    @vendor.destroy
   end
 
   private
