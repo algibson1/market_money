@@ -1,55 +1,57 @@
 require "rails_helper"
 
 RSpec.describe "Vendor API requests" do
-  it "can return one vendor object + attributes" do
-    new_vendor = create(:vendor)
-    get "/api/v0/vendors/#{new_vendor.id}"
+  context "get endpoint" do
+    it "can return one vendor object + attributes" do
+      new_vendor = create(:vendor)
+      get "/api/v0/vendors/#{new_vendor.id}"
 
-    expect(response).to be_successful
-    expect(response.status).to eq(200)
-    parsed_response = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      parsed_response = JSON.parse(response.body, symbolize_names: true)
 
-    expect(parsed_response).to have_key(:data)
-    vendor = parsed_response[:data]
+      expect(parsed_response).to have_key(:data)
+      vendor = parsed_response[:data]
 
-    expect(vendor).to have_key(:id)
-    expect(vendor[:id]).to eq("#{new_vendor.id}")
+      expect(vendor).to have_key(:id)
+      expect(vendor[:id]).to eq("#{new_vendor.id}")
 
-    expect(vendor).to have_key(:type)
-    expect(vendor[:type]).to eq("vendor")
+      expect(vendor).to have_key(:type)
+      expect(vendor[:type]).to eq("vendor")
 
-    expect(vendor).to have_key(:attributes)
-    expect(vendor[:attributes]).to be_a(Hash)
+      expect(vendor).to have_key(:attributes)
+      expect(vendor[:attributes]).to be_a(Hash)
 
-    expect(vendor[:attributes]).to have_key(:name)
-    expect(vendor[:attributes][:name]).to be_a(String)
+      expect(vendor[:attributes]).to have_key(:name)
+      expect(vendor[:attributes][:name]).to be_a(String)
 
-    expect(vendor[:attributes]).to have_key(:description)
-    expect(vendor[:attributes][:description]).to be_a(String)
+      expect(vendor[:attributes]).to have_key(:description)
+      expect(vendor[:attributes][:description]).to be_a(String)
 
-    expect(vendor[:attributes]).to have_key(:contact_name)
-    expect(vendor[:attributes][:contact_name]).to be_a(String)
+      expect(vendor[:attributes]).to have_key(:contact_name)
+      expect(vendor[:attributes][:contact_name]).to be_a(String)
 
-    expect(vendor[:attributes]).to have_key(:contact_phone)
-    expect(vendor[:attributes][:contact_phone]).to be_a(String)
+      expect(vendor[:attributes]).to have_key(:contact_phone)
+      expect(vendor[:attributes][:contact_phone]).to be_a(String)
 
-    expect(vendor[:attributes]).to have_key(:credit_accepted)
-    expect(vendor[:attributes][:credit_accepted]).to eq(true).or eq(false)
-  end
+      expect(vendor[:attributes]).to have_key(:credit_accepted)
+      expect(vendor[:attributes][:credit_accepted]).to eq(true).or eq(false)
+    end
 
-  it "returns an error if vendor id is invalid" do
-    get "/api/v0/vendors/453"
+    it "returns an error if vendor id is invalid" do
+      get "/api/v0/vendors/453"
 
-    expect(response.status).to eq(404)
-    
-    error = JSON.parse(response.body, symbolize_names: true)
-    
-    expect(error).to have_key(:errors)
-    expect(error[:errors]).to be_an(Array)
-    expect(error[:errors].count).to eq(1)
-    expect(error[:errors].first).to be_a(Hash)
-    expect(error[:errors].first).to have_key(:detail)
-    expect(error[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=453")
+      expect(response.status).to eq(404)
+      
+      error = JSON.parse(response.body, symbolize_names: true)
+      
+      expect(error).to have_key(:errors)
+      expect(error[:errors]).to be_an(Array)
+      expect(error[:errors].count).to eq(1)
+      expect(error[:errors].first).to be_a(Hash)
+      expect(error[:errors].first).to have_key(:detail)
+      expect(error[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=453")
+    end
   end
 
   context "post endpoint" do
@@ -164,5 +166,76 @@ RSpec.describe "Vendor API requests" do
 
       expect(error).to eq(expected_error)
     end
+  end
+
+  context "patch endpoint" do
+    it "can update an existing vendor" do
+      vendor = create(:vendor, contact_name: "Elizabeth Swan", credit_accepted: true)
+      
+      get "/api/v0/vendors/#{vendor.id}"
+      current_vendor = JSON.parse(response.body, symbolize_names: true)
+      expect(current_vendor[:data][:attributes][:contact_name]).to eq("Elizabeth Swan")
+      expect(current_vendor[:data][:attributes][:credit_accepted]).to eq(true)
+      
+
+      patch "/api/v0/vendors/#{vendor.id}", params: {
+        contact_name: "Kimberly Couwer",
+        credit_accepted: false
+      }
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      updated_vendor = JSON.parse(response.body, symbolize_names: true)
+      expect(updated_vendor[:data][:attributes][:contact_name]).to eq("Kimberly Couwer")
+      expect(updated_vendor[:data][:attributes][:credit_accepted]).to eq(false)
+      expect(current_vendor[:data][:attributes][:name]).to eq(updated_vendor[:data][:attributes][:name])
+      expect(current_vendor[:data][:attributes][:contact_phone]).to eq(updated_vendor[:data][:attributes][:contact_phone])
+      expect(current_vendor[:data][:attributes][:contact_phone]).to_not eq(nil)
+    end
+
+    it "returns error if requested vendor doesn't exist" do
+      patch "/api/v0/vendors/453",  params: {
+        contact_name: "Kimberly Couwer",
+        credit_accepted: false
+      }
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+      
+      error = JSON.parse(response.body, symbolize_names: true)
+      
+      expect(error).to have_key(:errors)
+      expect(error[:errors]).to be_an(Array)
+      expect(error[:errors].count).to eq(1)
+      expect(error[:errors].first).to be_a(Hash)
+      expect(error[:errors].first).to have_key(:detail)
+      expect(error[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=453")
+    end
+
+    it "returns error if update request body is invalid" do
+      vendor = create(:vendor)
+
+      patch "/api/v0/vendors/#{vendor.id}",  params: {
+        contact_name: "",
+        credit_accepted: false
+      }
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+      
+      error = JSON.parse(response.body, symbolize_names: true)
+      
+      expect(error).to have_key(:errors)
+      expect(error[:errors]).to be_an(Array)
+      expect(error[:errors].count).to eq(1)
+      expect(error[:errors].first).to be_a(Hash)
+      expect(error[:errors].first).to have_key(:detail)
+      expect(error[:errors].first[:detail]).to eq("Validation failed: Contact name can't be blank")
+    end
+  end
+
+  context "delete endpoint" do
+    
   end
 end
