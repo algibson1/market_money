@@ -7,9 +7,9 @@ class Api::V0::VendorsController < ApplicationController
 
   def create
     vendor = Vendor.new(vendor_params)
-    if ["true", "false"].include?(params[:credit_accepted]) && vendor.save
+    if ["true", "false", true, false].include?(params[:credit_accepted]) && vendor.save
       render json: VendorSerializer.new(vendor), status: :created
-    elsif !["true", "false"].include?(params[:credit_accepted])
+    elsif !["true", "false", true, false].include?(params[:credit_accepted])
       vendor = Vendor.create(vendor_params_nix_credit_accepted)
       render json: ErrorSerializer.invalid(vendor.errors), status: :bad_request
     else
