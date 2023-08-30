@@ -65,4 +65,132 @@ RSpec.describe "Market Vendor Requests" do
     expect(error[:errors].first).to have_key(:detail)
     expect(error[:errors].first[:detail]).to eq("Couldn't find Market with 'id'=534")
   end
+
+  context "create endpoint" do
+    it "creates a new association between a market and vendor" do
+      market = create(:market)
+      vendor = create(:vendor)
+      expect(MarketVendor.all.count).to eq(0)
+
+      get "/api/v0/markets/#{market.id}/vendors"
+      vendor_list = JSON.parse(response.body, symbolize_names: true)
+      expect(vendor_list[:data].count).to eq(0)
+      expect(market.vendor_count).to eq(0)
+
+      post "/api/v0/market_vendors", params: {
+        vendor_id: vendor.id,
+        market_id: market.id
+      }
+
+      expect(response).to be_successful
+      expect(response.status).to eq(201)
+      message = JSON.parse(response.body, symbolize_names: true)
+
+      expect(message).to eq({message: "Successfully added vendor to market"})
+      expect(MarketVendor.all.count).to eq(1)
+      expect(market.vendors).to include(vendor)
+
+      get "/api/v0/markets/#{market.id}/vendors"
+      vendor_list = JSON.parse(response.body, symbolize_names: true)
+      expect(vendor_list[:data].count).to eq(1)
+    end
+
+    it "throws an error if market id is invalid" do
+      vendor = create(:vendor)
+
+      post "/api/v0/market_vendors", params: {
+        vendor_id: vendor.id,
+        market_id: 36454
+      }
+
+      expect(response.status).to eq(404)
+      error = JSON.parse(response.body, symbolize_names: true)
+      expected =  {
+            errors: [
+              {
+                detail: "Validation failed: Market must exist"
+              }
+            ]
+          }
+
+      expect(error).to eq(expected)
+    end
+
+    it "throws an error if vendor id is invalid" do
+      market = create(:market)
+
+      post "/api/v0/market_vendors", params: {
+        vendor_id: 546546,
+        market_id: market.id
+      }
+
+      expect(response.status).to eq(404)
+      error = JSON.parse(response.body, symbolize_names: true)
+      expected =  {
+            errors: [
+              {
+                detail: "Validation failed: Vendor must exist"
+              }
+            ]
+          }
+
+      expect(error).to eq(expected)
+    end
+
+    it "throws an error if market id is not included" do
+      vendor = create(:vendor)
+
+      post "/api/v0/market_vendors", params: {
+        vendor_id: vendor.id
+      }
+
+      expect(response.status).to eq(400)
+      error = JSON.parse(response.body, symbolize_names: true)
+      expected =  {
+            errors: [
+              {
+                detail: "Validation failed: Market must exist"
+              }
+            ]
+          }
+
+      expect(error).to eq(expected)
+    end
+
+    it "throws an error if vendor id is not included" do
+      market = create(:market)
+
+      post "/api/v0/market_vendors", params: {
+        market_id: market.id
+      }
+
+      expect(response.status).to eq(400)
+      error = JSON.parse(response.body, symbolize_names: true)
+      expected =  {
+            errors: [
+              {
+                detail: "Validation failed: Vendor must exist"
+              }
+            ]
+          }
+
+      expect(error).to eq(expected)
+    end
+
+    it "informs user if market_vendor association already exists" do
+      market = create(:market)
+      vendor = create(:vendor)
+      market_vendor = MarketVendor.create!(market: market, vendor: vendor)
+
+      post "/api/v0/market_vendors", params: {
+        vendor_id: vendor.id,
+        market_id: market.id
+      }
+
+      expect(response.status).to eq(422)
+      message = JSON.parse(response.body, symbolize_names: true)
+
+      expect(message).to eq({errors: [{detail: "Validation failed: Market vendor association between market with 'id'=#{market.id} and vendor with 'id'=#{vendor.id} already exists"}]})
+    end
+  end
 end
