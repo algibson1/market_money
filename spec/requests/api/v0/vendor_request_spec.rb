@@ -166,6 +166,31 @@ RSpec.describe "Vendor API requests" do
 
       expect(error).to eq(expected_error)
     end
+
+    it "raises an error for a invalid data" do
+      post "/api/v0/vendors", params: {
+        name: "Buzzy Bees",
+        description: "Local honey and wax products",
+        contact_name: "Berly Couwer",
+        contact_phone: "8389928383",
+        credit_accepted: "hello world"
+      }
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+
+      expected_error =  {
+        errors: [
+          {
+            detail: "Validation failed: Credit accepted must be included as a true or false value"
+          }
+        ]
+      }
+
+      expect(error).to eq(expected_error)
+    end
   end
 
   context "patch endpoint" do
@@ -213,7 +238,7 @@ RSpec.describe "Vendor API requests" do
       expect(error[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=453")
     end
 
-    it "returns error if update request body is invalid" do
+    it "returns error if update request body removes data" do
       vendor = create(:vendor)
 
       patch "/api/v0/vendors/#{vendor.id}",  params: {
@@ -236,6 +261,41 @@ RSpec.describe "Vendor API requests" do
   end
 
   context "delete endpoint" do
-    
+    it "can delete a vendor, and its associations" do
+      market = create(:market)
+      market_vendors = create_list(:market_vendor, 4, market: market)
+      vendor = Vendor.find(market_vendors[0].vendor_id)
+
+      expect(market.vendors.count).to eq(4)
+      expect(market.vendors).to include(vendor)
+
+      delete "/api/v0/vendors/#{vendor.id}"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(204)
+      expect(response.body).to eq("")
+      
+      expect(Vendor.all).to_not include(vendor)
+      expect(market.vendors.count).to eq(3)
+      expect(market.vendors).to_not include(vendor)
+    end
+
+    it "returns an error code if invalid id is passed" do
+      delete "/api/v0/vendors/345"
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      expected =  {
+          errors: [
+            {
+              detail: "Couldn't find Vendor with 'id'=345"
+            }
+          ]
+        }
+
+      error = JSON.parse(response.body, symbolize_names: true)
+      expect(error).to eq(expected)
+    end
   end
 end
