@@ -1,0 +1,88 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.tomtom.com/search/2/nearbySearch/.json?categorySet=7397&key=<HIDDEN_KEY>&lat=35.234&lon=-106.435&radius=10000
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.7.10
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 31 Aug 2023 20:01:40 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Vary:
+      - Accept-Encoding
+      Access-Control-Allow-Origin:
+      - "*"
+      Tracking-Id:
+      - a6a53c76-5818-4a2e-b363-4bae921d4214
+      Access-Control-Expose-Headers:
+      - Tracking-ID
+      X-Apigee.target-Latency:
+      - '33'
+      X-Envoy-Upstream-Service-Time:
+      - '44'
+      Server:
+      - tomtom
+      X-Tomtom-Processed-By:
+      - westus2
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"summary":{"queryType":"NEARBY","queryTime":30,"numResults":7,"offset":0,"totalResults":7,"fuzzyLevel":1,"geoBias":{"lat":35.234,"lon":-106.435},"geobiasCountry":"US"},"results":[{"type":"POI","id":"KJtmiD__BVXsOsfUElxH7w","score":93.7450180054,"dist":6254.984369,"info":"search:ta:840359000646898-US","poi":{"name":"Pueblo
+        Bank And Trust Company","categorySet":[{"id":7397}],"categories":["cash dispenser"],"classifications":[{"code":"CASH_DISPENSER","names":[{"nameLocale":"en-US","name":"cash
+        dispenser"}]}]},"address":{"streetNumber":"10","streetName":"Tramway Loop
+        Northeast","municipality":"Albuquerque","countrySecondarySubdivision":"Bernalillo","countrySubdivision":"NM","countrySubdivisionName":"New
+        Mexico","postalCode":"87122","extendedPostalCode":"87122-2017","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"10 Tramway Loop Northeast,
+        Albuquerque, NM 87122","localName":"Albuquerque"},"position":{"lat":35.191003,"lon":-106.479394},"viewport":{"topLeftPoint":{"lat":35.1919,"lon":-106.48049},"btmRightPoint":{"lat":35.1901,"lon":-106.47829}},"entryPoints":[{"type":"main","position":{"lat":35.19102,"lon":-106.47922}}]},{"type":"POI","id":"xtAv8bSv0Zl3WQMahZgfjw","score":92.5916900635,"dist":7408.316272,"info":"search:ta:840359000788142-US","poi":{"name":"ATM","categorySet":[{"id":7397}],"categories":["cash
+        dispenser"],"classifications":[{"code":"CASH_DISPENSER","names":[{"nameLocale":"en-US","name":"cash
+        dispenser"}]}]},"address":{"streetNumber":"9530","streetName":"Tramway Boulevard
+        Northeast","municipality":"Albuquerque","countrySecondarySubdivision":"Bernalillo","countrySubdivision":"NM","countrySubdivisionName":"New
+        Mexico","postalCode":"87122","extendedPostalCode":"87122-2244","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"9530 Tramway Boulevard
+        Northeast, Albuquerque, NM 87122","localName":"Albuquerque"},"position":{"lat":35.189168,"lon":-106.495321},"viewport":{"topLeftPoint":{"lat":35.19007,"lon":-106.49642},"btmRightPoint":{"lat":35.18827,"lon":-106.49422}},"entryPoints":[{"type":"main","position":{"lat":35.18919,"lon":-106.49613}}]},{"type":"POI","id":"_IrcaI-sDoETzRgta2CA6Q","score":92.2514419556,"dist":7748.563697,"info":"search:ta:840357000004529-US","poi":{"name":"Bank
+        Of Ok, A Div Of Bokf, Na","categorySet":[{"id":7397}],"categories":["cash
+        dispenser"],"classifications":[{"code":"CASH_DISPENSER","names":[{"nameLocale":"en-US","name":"cash
+        dispenser"}]}]},"address":{"streetNumber":"8901","streetName":"Tramway Boulevard
+        Northeast","municipality":"Albuquerque","countrySecondarySubdivision":"Bernalillo","countrySubdivision":"NM","countrySubdivisionName":"New
+        Mexico","postalCode":"87122","countryCode":"US","country":"United States","countryCodeISO3":"USA","freeformAddress":"8901
+        Tramway Boulevard Northeast, Albuquerque, NM 87122","localName":"Albuquerque"},"position":{"lat":35.18574,"lon":-106.496525},"viewport":{"topLeftPoint":{"lat":35.18664,"lon":-106.49763},"btmRightPoint":{"lat":35.18484,"lon":-106.49542}},"entryPoints":[{"type":"main","position":{"lat":35.18574,"lon":-106.49641}}]},{"type":"POI","id":"U_8jme6L1G-meFGh8mfgGw","score":91.1944580078,"dist":8805.544937,"info":"search:ta:840359000781534-US","poi":{"name":"Columbus
+        Data Services","categorySet":[{"id":7397}],"categories":["cash dispenser"],"classifications":[{"code":"CASH_DISPENSER","names":[{"nameLocale":"en-US","name":"cash
+        dispenser"}]}]},"address":{"streetNumber":"7847","streetName":"Tramway Boulevard
+        Northeast","municipalitySubdivision":"North Albuquerque Acres","municipality":"Albuquerque","countrySecondarySubdivision":"Bernalillo","countrySubdivision":"NM","countrySubdivisionName":"New
+        Mexico","postalCode":"87122","countryCode":"US","country":"United States","countryCodeISO3":"USA","freeformAddress":"7847
+        Tramway Boulevard Northeast, Albuquerque, NM 87122","localName":"Albuquerque"},"position":{"lat":35.173152,"lon":-106.497025},"viewport":{"topLeftPoint":{"lat":35.17427,"lon":-106.49839},"btmRightPoint":{"lat":35.17203,"lon":-106.49566}},"entryPoints":[{"type":"main","position":{"lat":35.17416,"lon":-106.49643}},{"type":"minor","position":{"lat":35.17236,"lon":-106.49686}}]},{"type":"POI","id":"VQgTQ_Zhakhpm5L3JfUHwA","score":91.1198883057,"dist":8880.117996,"info":"search:ta:840359000657929-US","poi":{"name":"Columbus
+        Data Services","categorySet":[{"id":7397}],"categories":["cash dispenser"],"classifications":[{"code":"CASH_DISPENSER","names":[{"nameLocale":"en-US","name":"cash
+        dispenser"}]}]},"address":{"streetNumber":"7843","streetName":"Tramway Boulevard
+        Northeast","municipalitySubdivision":"North Albuquerque Acres","municipality":"Albuquerque","countrySecondarySubdivision":"Bernalillo","countrySubdivision":"NM","countrySubdivisionName":"New
+        Mexico","postalCode":"87122","extendedPostalCode":"87122-2515","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"7843 Tramway Boulevard
+        Northeast, Albuquerque, NM 87122","localName":"Albuquerque"},"position":{"lat":35.172171,"lon":-106.496859},"viewport":{"topLeftPoint":{"lat":35.17307,"lon":-106.49796},"btmRightPoint":{"lat":35.17127,"lon":-106.49576}},"entryPoints":[{"type":"main","position":{"lat":35.1721,"lon":-106.49677}},{"type":"main","position":{"lat":35.1721,"lon":-106.49675}},{"type":"main","position":{"lat":35.17214,"lon":-106.49669}}]},{"type":"POI","id":"cf0RIjok9DGDp8tGDg_rpg","score":90.4435119629,"dist":9556.486995,"info":"search:ta:840359000342917-US","poi":{"name":"Cu
+        Anytime","categorySet":[{"id":7397}],"categories":["cash dispenser"],"classifications":[{"code":"CASH_DISPENSER","names":[{"nameLocale":"en-US","name":"cash
+        dispenser"}]}]},"address":{"streetNumber":"12700","streetName":"San Rafael
+        Avenue Northeast","municipality":"Albuquerque","countrySecondarySubdivision":"Bernalillo","countrySubdivision":"NM","countrySubdivisionName":"New
+        Mexico","postalCode":"87122","extendedPostalCode":"87122-1132","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"12700 San Rafael Avenue
+        Northeast, Albuquerque, NM 87122","localName":"Albuquerque"},"position":{"lat":35.163665,"lon":-106.495441},"viewport":{"topLeftPoint":{"lat":35.16456,"lon":-106.49654},"btmRightPoint":{"lat":35.16277,"lon":-106.49434}},"entryPoints":[{"type":"main","position":{"lat":35.16414,"lon":-106.49545}}]},{"type":"POI","id":"qJoVsURnTQ27sSR3R5zn3g","score":90.2961120605,"dist":9703.89181,"info":"search:ta:840357000004823-US","poi":{"name":"US
+        Bank","phone":"+1 505-771-4600","brands":[{"name":"US Bank"}],"categorySet":[{"id":7397}],"url":"www.usbank.com","categories":["cash
+        dispenser"],"classifications":[{"code":"CASH_DISPENSER","names":[{"nameLocale":"en-US","name":"cash
+        dispenser"}]}]},"address":{"streetNumber":"221","streetName":"State Highway
+        165","municipality":"Placitas","countrySecondarySubdivision":"Sandoval","countrySubdivision":"NM","countrySubdivisionName":"New
+        Mexico","postalCode":"87043","countryCode":"US","country":"United States","countryCodeISO3":"USA","freeformAddress":"221
+        State Highway 165, Placitas, NM 87043","localName":"Placitas"},"position":{"lat":35.307871,"lon":-106.491912},"viewport":{"topLeftPoint":{"lat":35.30877,"lon":-106.49301},"btmRightPoint":{"lat":35.30697,"lon":-106.49081}},"entryPoints":[{"type":"main","position":{"lat":35.3074,"lon":-106.49225}}]}]}'
+  recorded_at: Thu, 31 Aug 2023 20:01:40 GMT
+recorded_with: VCR 6.2.0
