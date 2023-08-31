@@ -13,4 +13,8 @@ class Market < ApplicationRecord
   def vendor_count
     vendors.count
   end
+
+  def self.search(search)
+    Market.where(search.render_queries)
+  end
 end
