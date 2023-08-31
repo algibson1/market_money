@@ -62,4 +62,17 @@ RSpec.describe ErrorSerializer do
 
     expect(ErrorSerializer.no_association({})).to eq(expected)
   end
+
+  it "formats errors for invalid searches" do
+    expected =  {
+      errors: [
+            {
+              detail: "Invalid set of parameters. Please provide a valid set of parameters to perform a search with this endpoint."
+            }
+          ]
+        }
+    
+    expect(ErrorSerializer.invalid_search).to eq(expected)
+    
+  end
 end
