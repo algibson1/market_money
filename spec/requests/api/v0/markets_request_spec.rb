@@ -112,4 +112,69 @@ RSpec.describe "Markets API" do
     expect(error[:errors].first).to have_key(:detail)
     expect(error[:errors].first[:detail]).to eq("Couldn't find Market with 'id'=534")
   end
+
+  context "search function" do
+    it "returns list of markets by given search terms" do
+      markets = create_list(:market, 3, state: "California", city: "Oceanside")
+      apple_market = markets[0].update(name: "Apple Nation")
+      more_markets = create_list(:market, 2, state: "Oregon")
+
+      get "/api/v0/markets/search", params: {
+        state: "california",
+        city: "oceanside"
+      }
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      returned_markets = JSON.parse(response.body, symbolize_names: true)
+      expect(returned_markets[:data].count).to eq(3)
+
+      get "/api/v0/markets/search", params: {
+        state: "california",
+        city: "oceanside",
+        name: "apple nation"
+      }    
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      returned_markets = JSON.parse(response.body, symbolize_names: true)
+      expect(returned_markets[:data].count).to eq(1)
+    end
+
+    it "might return no markets" do
+      get "/api/v0/markets/search", params: {
+        state: "california"
+      }    
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      returned_markets = JSON.parse(response.body, symbolize_names: true)
+      expect(returned_markets[:data].count).to eq(0)
+    end
+
+    it "only accepts certain combos of params" do
+      get "/api/v0/markets/search", params: {
+        city: "springfield"
+      }    
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(422)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+      
+      expected =  {
+        errors: [
+              {
+                detail: "Invalid set of parameters. Please provide a valid set of parameters to perform a search with this endpoint."
+              }
+            ]
+          }
+
+      expect(error).to eq(expected)
+    end
+  end
+
 end
