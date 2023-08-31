@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Markets API" do
+RSpec.describe "Markets API", :vcr do
   it "returns a list of all markets" do
     create_list(:market, 5)
 
@@ -174,6 +174,67 @@ RSpec.describe "Markets API" do
           }
 
       expect(error).to eq(expected)
+    end
+  end
+
+  context "ATM search" do
+    it "returns nearest atms to market, ordered by distance" do
+      market = create(:market, lat: 35.07, lon: -106.60)
+      get "/api/v0/markets/#{market.id}/nearest_atms"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      atms = JSON.parse(response.body, symbolize_names: true)
+
+      expect(atms).to have_key(:data)
+      expect(atms[:data]).to be_an(Array)
+
+      atms[:data].each do |atm|
+        expect(atm).to have_key(:id)
+        expect(atm[:id]).to eq(nil)
+
+        expect(atm[:type]).to eq("atm")
+        expect(atm[:attributes]).to be_a(Hash)
+        expect(atm[:attributes][:name]).to be_a(String)
+        expect(atm[:attributes][:address]).to be_a(String)
+        expect(atm[:attributes][:lat]).to be_a(Float)
+        expect(atm[:attributes][:lon]).to be_a(Float)
+        expect(atm[:attributes][:distance]).to be_a(Float)
+      end
+
+      atms[:data].each_cons(2).each do |first, second|
+        expect(first[:attributes][:distance] < second[:attributes][:distance]).to be(true)
+      end
+    end
+
+    it "might return no atms" do
+      market = create(:market, lat: 5, lon: -130)
+      get "/api/v0/markets/#{market.id}/nearest_atms"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      atms = JSON.parse(response.body, symbolize_names: true)
+
+      expect(atms).to have_key(:data)
+      expected = {data: []}
+      expect(atms).to eq(expected)
+    end
+
+    it "returns an error if market not found" do
+      get "/api/v0/markets/534/nearest_atms"
+
+      expect(response.status).to eq(404)
+      
+      error = JSON.parse(response.body, symbolize_names: true)
+      
+      expect(error).to have_key(:errors)
+      expect(error[:errors]).to be_an(Array)
+      expect(error[:errors].count).to eq(1)
+      expect(error[:errors].first).to be_a(Hash)
+      expect(error[:errors].first).to have_key(:detail)
+      expect(error[:errors].first[:detail]).to eq("Couldn't find Market with 'id'=534")
     end
   end
 
