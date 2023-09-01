@@ -11,44 +11,28 @@ RSpec.describe MarketSearch do
 
   describe "validations" do
     it "is always valid when state is passed in" do
-      search1 = MarketSearch.new({"state" => "California"})
-      search2 = MarketSearch.new({"state" => "California", "city" => "San Francisco"})
-      search3 = MarketSearch.new({"state" => "California", "city" => "San Francisco", "name" => "Orange Fair"})
-      search4 = MarketSearch.new({"state" => "California", "name" => "Orange Fair"})
-
-      expect(search1.valid?).to eq(true)
-      expect(search2.valid?).to eq(true)
-      expect(search3.valid?).to eq(true)
-      expect(search4.valid?).to eq(true)
+      expect { MarketSearch.new({"state" => "California"}) }.to_not raise_error
+      expect { MarketSearch.new({"state" => "California", "city" => "San Francisco"}) }.to_not raise_error
+      expect { MarketSearch.new({"state" => "California", "city" => "San Francisco", "name" => "Orange Fair"}) }.to_not raise_error
+      expect { MarketSearch.new({"state" => "California", "name" => "Orange Fair"}) }.to_not raise_error
     end
 
     it "is not valid if city is passed without a state" do
-      search1 = MarketSearch.new({"city" => "San Francisco", "name" => "Orange Fair"})
-      search2 = MarketSearch.new({"city" => "San Francisco"})
-      
-      expect(search1.valid?).to eq(false)
-      expect(search2.valid?).to eq(false)
+      expect { MarketSearch.new({"city" => "San Francisco", "name" => "Orange Fair"}) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect { MarketSearch.new({"city" => "San Francisco"}) }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
     it "is valid even if only name is passed" do
-      search = MarketSearch.new({"name" => "Orange Fair"})
-
-      expect(search.valid?).to eq(true)
+      expect { MarketSearch.new({"name" => "Orange Fair"}) }.to_not raise_error
     end
-  end
-
-  it "can make a query sql" do
-    search = MarketSearch.new({"state" => "California", "city" => "San Francisco", "name" => "Orange Fair"})
-
-    expect(search.query_sql).to eq("LOWER(state) LIKE LOWER(?) AND LOWER(city) LIKE LOWER(?) AND LOWER(name) LIKE LOWER(?)")
   end
 
   it "can render queries" do
     search1 = MarketSearch.new({"state" => "California", "city" => "San Francisco", "name" => "Orange Fair"})
     search2 = MarketSearch.new({"state" => "California", "name" => "Orange Fair"})
     
-    expect(search1.render_queries).to eq(["LOWER(state) LIKE LOWER(?) AND LOWER(city) LIKE LOWER(?) AND LOWER(name) LIKE LOWER(?)", "%California%", "%San Francisco%", "%Orange Fair%"])
-    expect(search2.render_queries).to eq(["LOWER(state) LIKE LOWER(?) AND LOWER(name) LIKE LOWER(?)", "%California%", "%Orange Fair%"])
+    expect(search1.render_queries).to eq(["state ILIKE ? AND city ILIKE ? AND name ILIKE ?", "%California%", "%San Francisco%", "%Orange Fair%"])
+    expect(search2.render_queries).to eq(["state ILIKE ? AND city ILIKE ? AND name ILIKE ?", "%California%", "%%", "%Orange Fair%"])
 
     market = create(:market, state: "California", city: "San Francisco", name: "Orange Fair")
 
