@@ -24,6 +24,10 @@ class Api::V0::VendorsController < ApplicationController
     render json: VendorSerializer.new(Vendor.multiple_states)
   end
 
+  def popular_states
+    render json: StateSerializer.serialize(Vendor.popular_states(params[:limit]))
+  end
+
   private
 
   def find_vendor
