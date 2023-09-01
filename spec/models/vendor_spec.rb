@@ -28,4 +28,47 @@ RSpec.describe Vendor do
 
     expect(vendor.states_sold_in).to eq(["Colorado", "California", "Oregon"])
   end
+
+  it "can return all vendors who sell in more than one state, ordered by states_sold_in" do
+    market1 = create(:market, state: "Alabama")
+    market2 = create(:market, state: "Alaska")
+    market3 = create(:market, state: "Arizona")
+    market4 = create(:market, state: "Arkansas")
+    market5 = create(:market, state: "California")
+    market6 = create(:market, state: "Colorado")
+    vendor1 = create(:vendor)
+    vendor2 = create(:vendor)
+    vendor3 = create(:vendor)
+    vendor4 = create(:vendor)
+    vendor5 = create(:vendor)
+    vendor6 = create(:vendor)
+
+    MarketVendor.create(market: market1, vendor: vendor1)
+    MarketVendor.create(market: market2, vendor: vendor1)
+    MarketVendor.create(market: market3, vendor: vendor1)
+    MarketVendor.create(market: market4, vendor: vendor1)
+    MarketVendor.create(market: market5, vendor: vendor1)
+    MarketVendor.create(market: market6, vendor: vendor1)
+    
+    MarketVendor.create(market: market1, vendor: vendor5)
+    MarketVendor.create(market: market2, vendor: vendor5)
+    MarketVendor.create(market: market3, vendor: vendor5)
+    MarketVendor.create(market: market4, vendor: vendor5)
+    MarketVendor.create(market: market5, vendor: vendor5)
+
+    MarketVendor.create(market: market1, vendor: vendor3)
+    MarketVendor.create(market: market2, vendor: vendor3)
+    MarketVendor.create(market: market3, vendor: vendor3)
+
+    MarketVendor.create(market: market1, vendor: vendor4)
+    MarketVendor.create(market: market2, vendor: vendor4)
+    MarketVendor.create(market: market3, vendor: vendor4)
+    MarketVendor.create(market: market4, vendor: vendor4)
+
+    MarketVendor.create(market: market1, vendor: vendor2)
+
+    MarketVendor.create(market: market1, vendor: vendor6)
+
+    expect(Vendor.multiple_states).to eq([vendor1, vendor5, vendor4, vendor3])
+  end
 end
