@@ -4,5 +4,6 @@ class VendorSerializer
               :description, 
               :contact_name, 
               :contact_phone, 
-              :credit_accepted
+              :credit_accepted,
+              :states_sold_in
 end
