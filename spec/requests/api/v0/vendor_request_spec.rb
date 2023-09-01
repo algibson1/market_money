@@ -36,6 +36,9 @@ RSpec.describe "Vendor API requests" do
 
       expect(vendor[:attributes]).to have_key(:credit_accepted)
       expect(vendor[:attributes][:credit_accepted]).to eq(true).or eq(false)
+
+      expect(vendor[:attributes]).to have_key(:states_sold_in)
+      expect(vendor[:attributes][:states_sold_in]).to be_an(Array)
     end
 
     it "returns an error if vendor id is invalid" do
@@ -94,7 +97,10 @@ RSpec.describe "Vendor API requests" do
       expect(vendor[:attributes][:contact_phone]).to eq("8389928383")
   
       expect(vendor[:attributes]).to have_key(:credit_accepted)
-      expect(vendor[:attributes][:credit_accepted]).to eq(false)    
+      expect(vendor[:attributes][:credit_accepted]).to eq(false) 
+
+      expect(vendor[:attributes]).to have_key(:states_sold_in)
+      expect(vendor[:attributes][:states_sold_in]).to be_an(Array)
     end
 
     it "raises an error for a missing name or description" do
