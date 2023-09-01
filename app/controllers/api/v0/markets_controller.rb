@@ -11,11 +11,7 @@ class Api::V0::MarketsController < ApplicationController
 
   def search
     search = MarketSearch.new(search_params)
-    if search.valid?
-      render json: MarketSerializer.new(Market.search(search))
-    else
-      render json: ErrorSerializer.invalid_search, status: :unprocessable_entity
-    end
+    render json: MarketSerializer.new(Market.search(search))
   end
 
   def nearest_atms
@@ -28,10 +24,6 @@ class Api::V0::MarketsController < ApplicationController
   end
 
   def find_market
-    begin
-      @market = Market.find(params[:id])
-    rescue ActiveRecord::RecordNotFound => error
-      render json: ErrorSerializer.not_found(error), status: :not_found
-    end
+    @market = Market.find(params[:id])
   end
 end
