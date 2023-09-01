@@ -8,13 +8,9 @@ class ApplicationController < ActionController::API
   end
 
   def invalid_response(error)
-    if error.message.include?("must exist")
-      render json: ErrorSerializer.serialize(error), status: :not_found
-    elsif error.message.include?("blank")
-      render json: ErrorSerializer.serialize(error), status: :bad_request
-    else
-      render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
-    end
+    return not_found_response(error) if error.message.include?("must exist")
+    return bad_request_response(error) if error.message.include?("blank")
+    render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
   end
 
   def bad_request_response(error)
