@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resources :markets, only: [:index, :show] do
         resources :vendors, only: [:index], controller: :market_vendors
       end
+      get "/vendors/multiple_states", to: "vendors#multiple_states"
       resources :vendors, only: [:show, :create, :update, :destroy]
       resource :market_vendors, only: [:create, :destroy]
     end
