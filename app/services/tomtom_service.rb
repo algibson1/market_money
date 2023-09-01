@@ -8,16 +8,4 @@ class TomtomService
       f.params[:key] = Rails.application.credentials.tomtom[:key]
     end
   end
-
-  # def format_atms
-  #   response = JSON.parse(atm_search.body, symbolize_names: true)
-  #   response[:results].map do |atm|
-  #     { distance: atm[:distance], #calculated in meters... change to miles? Or other?
-  #       name: atm[:poi][:name],
-  #       address: atm[:address], #still a nested hash
-  #       lat: atm[:position][:lat],
-  #       lon: atm[:position][:lon]
-  #     }
-  #   end
-  # end
 end
