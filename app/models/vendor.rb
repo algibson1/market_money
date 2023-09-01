@@ -6,4 +6,8 @@ class Vendor < ApplicationRecord
                         :contact_name,
                         :contact_phone
   validates :credit_accepted, inclusion: {in: [true, false], message: "cannot be left blank"}
+
+  def states_sold_in
+    markets.pluck(:state).uniq
+  end
 end
