@@ -71,4 +71,53 @@ RSpec.describe Vendor do
 
     expect(Vendor.multiple_states).to eq([vendor1, vendor5, vendor4, vendor3])
   end
+
+  it "can report all states and how many vendors sell there" do
+    ca_market = create(:market, state: "California")
+    co_market = create(:market, state: "Colorado")
+    pa_market = create(:market, state: "Pennsylvania")
+    ny_market = create(:market, state: "New York")
+    al_market = create(:market, state: "Alabama")
+
+    create_list(:market_vendor, 10, market: ca_market)
+    create_list(:market_vendor, 29, market: co_market)
+    create_list(:market_vendor, 15, market: pa_market)
+    create_list(:market_vendor, 31, market: ny_market)
+    create_list(:market_vendor, 5, market: al_market)
+
+    states = Vendor.popular_states
+    expect(states[0].state).to eq("New York")
+    expect(states[0].number_of_vendors).to eq(31)
+
+    expect(states[1].state).to eq("Colorado")
+    expect(states[1].number_of_vendors).to eq(29)
+
+    expect(states[2].state).to eq("Pennsylvania")
+    expect(states[2].number_of_vendors).to eq(15)
+
+    expect(states[3].state).to eq("California")
+    expect(states[3].number_of_vendors).to eq(10)
+
+    expect(states[4].state).to eq("Alabama")
+    expect(states[4].number_of_vendors).to eq(5)
+  end
+
+  it "can take in an optional limit for top popular states" do
+    ca_market = create(:market, state: "California")
+    co_market = create(:market, state: "Colorado")
+    pa_market = create(:market, state: "Pennsylvania")
+    ny_market = create(:market, state: "New York")
+    al_market = create(:market, state: "Alabama")
+
+    create_list(:market_vendor, 10, market: ca_market)
+    create_list(:market_vendor, 29, market: co_market)
+    create_list(:market_vendor, 15, market: pa_market)
+    create_list(:market_vendor, 31, market: ny_market)
+    create_list(:market_vendor, 5, market: al_market)
+
+    states = Vendor.popular_states(3)
+
+    names = states.map { |state| state.state }
+    expect(names).to eq(["New York", "Colorado", "Pennsylvania"])
+  end
 end
