@@ -303,4 +303,64 @@ RSpec.describe "Vendor API requests" do
       expect(error).to eq(expected)
     end
   end
+
+  context "states sold in search" do
+    it "returns all vendors that sell in more than one state" do
+      market1 = create(:market, state: "Alabama")
+      market2 = create(:market, state: "Alaska")
+      market3 = create(:market, state: "Arizona")
+      market4 = create(:market, state: "Arkansas")
+      market5 = create(:market, state: "California")
+      market6 = create(:market, state: "Colorado")
+      vendor1 = create(:vendor)
+      vendor2 = create(:vendor)
+      vendor3 = create(:vendor)
+      vendor4 = create(:vendor)
+      vendor5 = create(:vendor)
+      vendor6 = create(:vendor)
+
+      MarketVendor.create(market: market1, vendor: vendor1)
+      MarketVendor.create(market: market2, vendor: vendor1)
+      MarketVendor.create(market: market3, vendor: vendor1)
+      MarketVendor.create(market: market4, vendor: vendor1)
+      MarketVendor.create(market: market5, vendor: vendor1)
+      MarketVendor.create(market: market6, vendor: vendor1)
+      
+      MarketVendor.create(market: market1, vendor: vendor5)
+      MarketVendor.create(market: market2, vendor: vendor5)
+      MarketVendor.create(market: market3, vendor: vendor5)
+      MarketVendor.create(market: market4, vendor: vendor5)
+      MarketVendor.create(market: market5, vendor: vendor5)
+  
+      MarketVendor.create(market: market1, vendor: vendor3)
+      MarketVendor.create(market: market2, vendor: vendor3)
+      MarketVendor.create(market: market3, vendor: vendor3)
+  
+      MarketVendor.create(market: market1, vendor: vendor4)
+      MarketVendor.create(market: market2, vendor: vendor4)
+      MarketVendor.create(market: market3, vendor: vendor4)
+      MarketVendor.create(market: market4, vendor: vendor4)
+  
+      MarketVendor.create(market: market1, vendor: vendor2)
+  
+      MarketVendor.create(market: market1, vendor: vendor6)
+  
+
+      get "/api/v0/vendors/multiple_states"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      parsed_response = JSON.parse(response.body, symbolize_names: true)
+
+      vendor_list = parsed_response[:data]
+      expect(vendor_list.count).to eq(4)
+      ids = vendor_list.map { |vendor| vendor[:id]}
+      expect(ids).to include(vendor1.id.to_s, vendor5.id.to_s, vendor4.id.to_s, vendor3.id.to_s)
+      expect(ids).to_not include(vendor2.id.to_s, vendor6.id.to_s)
+
+      vendor_list.each_cons(2).each do |first, second|
+        expect(first[:attributes][:states_sold_in].count > second[:attributes][:states_sold_in].count).to eq(true)
+      end
+    end
+  end
 end
