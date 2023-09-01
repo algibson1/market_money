@@ -18,4 +18,12 @@ class Vendor < ApplicationRecord
       .having("COUNT(DISTINCT markets.state) > 1")
       .order(state_count: :desc)
   end
+
+  def self.popular_states(limit = nil)
+    Vendor.joins(:markets)
+      .select("markets.state as state, COUNT(vendors.id) as number_of_vendors")
+      .group("markets.state")
+      .order(number_of_vendors: :desc)
+      .limit(limit)
+  end
 end
