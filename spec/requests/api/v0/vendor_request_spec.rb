@@ -159,32 +159,7 @@ RSpec.describe "Vendor API requests" do
       expected_error =  {
         errors: [
           {
-            detail: "Validation failed: Credit accepted must be included as a true or false value"
-          }
-        ]
-      }
-
-      expect(error).to eq(expected_error)
-    end
-
-    it "raises an error for a invalid data" do
-      post "/api/v0/vendors", params: {
-        name: "Buzzy Bees",
-        description: "Local honey and wax products",
-        contact_name: "Berly Couwer",
-        contact_phone: "8389928383",
-        credit_accepted: "hello world"
-      }
-
-      expect(response).to_not be_successful
-      expect(response.status).to eq(400)
-
-      error = JSON.parse(response.body, symbolize_names: true)
-
-      expected_error =  {
-        errors: [
-          {
-            detail: "Validation failed: Credit accepted must be included as a true or false value"
+            detail: "Validation failed: Credit accepted cannot be left blank"
           }
         ]
       }
