@@ -15,4 +15,17 @@ RSpec.describe Vendor do
     it { should allow_value(false).for(:credit_accepted) }
     it { should_not allow_value(nil).for(:credit_accepted) }
   end
+
+  it "can return number of states that vendor sells in" do
+    vendor = create(:vendor)
+    m1 = create(:market, state: "Colorado")
+    m2 = create(:market, state: "California")
+    m3 = create(:market, state: "Oregon")
+
+    create(:market_vendor, market: m1, vendor: vendor)
+    create(:market_vendor, market: m2, vendor: vendor)
+    create(:market_vendor, market: m3, vendor: vendor)
+
+    expect(vendor.states_sold_in).to eq(["Colorado", "California", "Oregon"])
+  end
 end
