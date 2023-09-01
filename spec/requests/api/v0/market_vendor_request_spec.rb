@@ -149,7 +149,7 @@ RSpec.describe "Market Vendor Requests" do
       expected =  {
             errors: [
               {
-                detail: "Validation failed: Market must exist"
+                detail: "Validation failed: Need both a market and a vendor id"
               }
             ]
           }
@@ -169,7 +169,7 @@ RSpec.describe "Market Vendor Requests" do
       expected =  {
             errors: [
               {
-                detail: "Validation failed: Vendor must exist"
+                detail: "Validation failed: Need both a market and a vendor id"
               }
             ]
           }

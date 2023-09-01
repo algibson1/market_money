@@ -5,5 +5,5 @@ class Vendor < ApplicationRecord
                         :description,
                         :contact_name,
                         :contact_phone
-  validates :credit_accepted, inclusion: {in: [true, false], message: "must be included as a true or false value"}
+  validates :credit_accepted, inclusion: {in: [true, false], message: "cannot be left blank"}
 end
