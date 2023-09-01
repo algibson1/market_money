@@ -10,4 +10,12 @@ class Vendor < ApplicationRecord
   def states_sold_in
     markets.pluck(:state).uniq
   end
+
+  def self.multiple_states
+    Vendor.joins(:markets)
+      .select("vendors.*, COUNT(DISTINCT markets.state) as state_count")
+      .group("vendors.id")
+      .having("COUNT(DISTINCT markets.state) > 1")
+      .order(state_count: :desc)
+  end
 end
