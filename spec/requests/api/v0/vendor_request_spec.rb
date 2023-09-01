@@ -304,7 +304,7 @@ RSpec.describe "Vendor API requests" do
     end
   end
 
-  context "states sold in search" do
+  context "states_sold_in search" do
     it "returns all vendors that sell in more than one state" do
       market1 = create(:market, state: "Alabama")
       market2 = create(:market, state: "Alaska")
@@ -361,6 +361,74 @@ RSpec.describe "Vendor API requests" do
       vendor_list.each_cons(2).each do |first, second|
         expect(first[:attributes][:states_sold_in].count > second[:attributes][:states_sold_in].count).to eq(true)
       end
+    end
+  end
+
+context "popular states search" do
+    it "can return list of states and count of vendors selling there" do
+      ca_market = create(:market, state: "California")
+      co_market = create(:market, state: "Colorado")
+      pa_market = create(:market, state: "Pennsylvania")
+      ny_market = create(:market, state: "New York")
+      al_market = create(:market, state: "Alabama")
+
+      create_list(:market_vendor, 10, market: ca_market)
+      create_list(:market_vendor, 29, market: co_market)
+      create_list(:market_vendor, 15, market: pa_market)
+      create_list(:market_vendor, 31, market: ny_market)
+      create_list(:market_vendor, 5, market: al_market)
+
+      get "/api/v0/vendors/popular_states"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      parsed_response = JSON.parse(response.body, symbolize_names: true)
+
+      states = parsed_response[:data]
+      expect(states.count).to eq(5)
+
+      expect(states[0][:state]).to eq("New York")
+      expect(states[0][:number_of_vendors]).to eq(31)
+
+      expect(states[1][:state]).to eq("Colorado")
+      expect(states[1][:number_of_vendors]).to eq(29)
+
+      expect(states[2][:state]).to eq("Pennsylvania")
+      expect(states[2][:number_of_vendors]).to eq(15)
+
+      expect(states[3][:state]).to eq("California")
+      expect(states[3][:number_of_vendors]).to eq(10)
+
+      expect(states[4][:state]).to eq("Alabama")
+      expect(states[4][:number_of_vendors]).to eq(5)
+    end
+
+    it "can return the top X number of popular states" do
+      ca_market = create(:market, state: "California")
+      co_market = create(:market, state: "Colorado")
+      pa_market = create(:market, state: "Pennsylvania")
+      ny_market = create(:market, state: "New York")
+      al_market = create(:market, state: "Alabama")
+
+      create_list(:market_vendor, 10, market: ca_market)
+      create_list(:market_vendor, 29, market: co_market)
+      create_list(:market_vendor, 15, market: pa_market)
+      create_list(:market_vendor, 31, market: ny_market)
+      create_list(:market_vendor, 5, market: al_market)
+
+      get "/api/v0/vendors/popular_states", params: {
+        limit: 3
+      }
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      parsed_response = JSON.parse(response.body, symbolize_names: true)
+
+      states = parsed_response[:data]
+      expect(states.count).to eq(3)
+
+      names = states.map { |state| state[:state] }
+      expect(names).to eq(["New York", "Colorado", "Pennsylvania"])
     end
   end
 end
