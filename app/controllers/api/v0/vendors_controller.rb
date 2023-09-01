@@ -20,6 +20,10 @@ class Api::V0::VendorsController < ApplicationController
     @vendor.destroy
   end
 
+  def multiple_states
+    render json: VendorSerializer.new(Vendor.multiple_states)
+  end
+
   private
 
   def find_vendor
