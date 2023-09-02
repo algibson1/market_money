@@ -120,4 +120,57 @@ RSpec.describe Vendor do
     names = states.map { |state| state.state }
     expect(names).to eq(["New York", "Colorado", "Pennsylvania"])
   end
+
+  it "can find vendors by state, ordered by popularity (how many markets they sell at)" do
+    market1 = create(:market, state: "Alabama")
+    other_al_market = create(:market, state: "Alabama")
+    market2 = create(:market, state: "Alaska")
+    market3 = create(:market, state: "Arizona")
+    market4 = create(:market, state: "Arkansas")
+    market5 = create(:market, state: "California")
+    market6 = create(:market, state: "Colorado")
+    vendor1 = create(:vendor)
+    vendor2 = create(:vendor)
+    vendor3 = create(:vendor)
+    vendor4 = create(:vendor)
+    vendor5 = create(:vendor)
+    vendor6 = create(:vendor)
+
+    MarketVendor.create(market: market1, vendor: vendor1)
+    MarketVendor.create(market: other_al_market, vendor: vendor1)
+    MarketVendor.create(market: market2, vendor: vendor1)
+    MarketVendor.create(market: market3, vendor: vendor1)
+    MarketVendor.create(market: market4, vendor: vendor1)
+    MarketVendor.create(market: market5, vendor: vendor1)
+    MarketVendor.create(market: market6, vendor: vendor1)
+    
+    MarketVendor.create(market: market1, vendor: vendor5)
+    MarketVendor.create(market: market2, vendor: vendor5)
+    MarketVendor.create(market: market3, vendor: vendor5)
+    MarketVendor.create(market: market4, vendor: vendor5)
+    MarketVendor.create(market: market5, vendor: vendor5)
+
+    MarketVendor.create(market: market1, vendor: vendor3)
+    MarketVendor.create(market: market2, vendor: vendor3)
+    MarketVendor.create(market: market3, vendor: vendor3)
+
+    MarketVendor.create(market: market1, vendor: vendor4)
+    MarketVendor.create(market: market2, vendor: vendor4)
+    MarketVendor.create(market: market3, vendor: vendor4)
+    MarketVendor.create(market: market4, vendor: vendor4)
+
+    MarketVendor.create(market: market1, vendor: vendor2)
+
+    MarketVendor.create(market: market2, vendor: vendor6)
+
+    al_vendors = Vendor.search("Alabama")
+    
+    expect(al_vendors).to eq([vendor1, vendor5, vendor4, vendor3, vendor2])
+
+    ak_vendors = Vendor.search("Alaska")
+    expect(ak_vendors).to eq([vendor1, vendor5, vendor4, vendor3, vendor6])
+
+    ar_vendors = Vendor.search("Arkansas")
+    expect(ar_vendors).to eq([vendor1, vendor5, vendor4])
+  end
 end
