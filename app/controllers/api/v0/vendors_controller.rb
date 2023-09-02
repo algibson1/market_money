@@ -2,6 +2,10 @@ class Api::V0::VendorsController < ApplicationController
   before_action :find_vendor, only: [:show, :update, :destroy]
   before_action :validate_credit_accepted, only: [:create, :update]
 
+  def index
+    render json: VendorSerializer.new(Vendor.search(params[:state]))
+  end
+
   def show
     render json: VendorSerializer.new(@vendor)
   end
@@ -18,6 +22,14 @@ class Api::V0::VendorsController < ApplicationController
 
   def destroy
     @vendor.destroy
+  end
+
+  def multiple_states
+    render json: VendorSerializer.new(Vendor.multiple_states)
+  end
+
+  def popular_states
+    render json: StateSerializer.serialize(Vendor.popular_states(params[:limit]))
   end
 
   private
