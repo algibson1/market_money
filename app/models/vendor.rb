@@ -12,7 +12,7 @@ class Vendor < ApplicationRecord
   end
 
   def self.multiple_states
-    Vendor.joins(:markets)
+    joins(:markets)
       .select("vendors.*, COUNT(DISTINCT markets.state) as state_count")
       .group("vendors.id")
       .having("COUNT(DISTINCT markets.state) > 1")
@@ -20,10 +20,22 @@ class Vendor < ApplicationRecord
   end
 
   def self.popular_states(limit = nil)
-    Vendor.joins(:markets)
+    joins(:markets)
       .select("markets.state as state, COUNT(vendors.id) as number_of_vendors")
       .group("markets.state")
       .order(number_of_vendors: :desc)
       .limit(limit)
+  end
+
+  def self.search(state)
+    select("vendors.id, vendors.name, vendors.description, vendors.contact_name, vendors.contact_phone, vendors.credit_accepted, market_count")
+      .from(
+          Vendor.joins(:markets)
+            .select("vendors.*, COUNT(markets.id) as market_count")
+            .group("vendors.id"), :vendors)
+      .joins(:markets)
+      .where("markets.state ILIKE ?", "%#{state}%")
+      .order(market_count: :desc)
+      .distinct
   end
 end
