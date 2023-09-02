@@ -2,6 +2,10 @@ class Api::V0::VendorsController < ApplicationController
   before_action :find_vendor, only: [:show, :update, :destroy]
   before_action :validate_credit_accepted, only: [:create, :update]
 
+  def index
+    render json: VendorSerializer.new(Vendor.search(params[:state]))
+  end
+
   def show
     render json: VendorSerializer.new(@vendor)
   end
