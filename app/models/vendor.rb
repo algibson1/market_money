@@ -28,7 +28,7 @@ class Vendor < ApplicationRecord
   end
 
   def self.search(state)
-    select("vendors.id, vendors.name, vendors.description, vendors.contact_name, vendors.contact_phone, vendors.credit_accepted, market_count")
+    select("vendors.*, market_count")
       .from(
           Vendor.joins(:markets)
             .select("vendors.*, COUNT(markets.id) as market_count")
