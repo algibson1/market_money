@@ -19,7 +19,7 @@ Base url: `http://localhost:3000/`
 `GET /api/v0/markets`
 
 Returns list of all markets in the database.
-```
+```json
    {
        "data": [
            {
@@ -61,7 +61,7 @@ Returns list of all markets in the database.
 `GET /api/v0/markets/:id`
 
 Returns one market, by the market id.
-```
+```json
    {
        "data": {
            "id": "322458",
@@ -84,7 +84,7 @@ Returns one market, by the market id.
 `GET /api/v0/markets/:id/vendors`
 
 Returns list of all vendors that sell at the market with the given market id.
-```
+```json
 {
     "data": [
         {
@@ -125,7 +125,7 @@ Returns list of all vendors that sell at the market with the given market id.
 
 Returns all vendors, in order by how many markets that vendor sells at.
 This endpoint accepts the optional parameter of `state` and will return only the vendors that sell in the given state (ex `/api/v0/vendors?state=California`)
-```
+```json
 {
     "data": [
         {
@@ -166,7 +166,7 @@ This endpoint accepts the optional parameter of `state` and will return only the
 `GET /api/v0/vendors/:id` 
 
 Returns one vendor by vendor id.
-```
+```json
 {
     "data": {
         "id": "54876",
@@ -189,7 +189,7 @@ Returns one vendor by vendor id.
 `POST /api/v0/vendors`
 
 Attributes for a new vendor must be sent in the request body as JSON. Example:
-```
+```json
  {
      "name": "Buzzy Bees",
      "description": "local honey and wax products",
@@ -199,7 +199,7 @@ Attributes for a new vendor must be sent in the request body as JSON. Example:
  }
 ```
 A successful request requires all above attributes to be included, and will return the newly created vendor resource. A request that is missing attributes will return an appropriate error message.
-```
+```json
 {
     "data": {
         "id": "56591",
@@ -220,14 +220,14 @@ A successful request requires all above attributes to be included, and will retu
 `PATCH /api/v0/vendors/:id`
 
 Alternative attributes for an existing vendor must be sent in the request body as JSON, such as below.
-```
+```json
  {
      "contact_name": "Kimberly Couwer",
      "credit_accepted": false
  }
 ```
 A successful request will return the updated vendor resource.
-```
+```json
 {
     "data": {
         "id": "56592",
@@ -252,14 +252,14 @@ Deletes the vendor resource by vendor id.
 `POST /api/v0/market_vendors`
 
 When a valid market id and vendor id are passed through the body like so:
-```
+```json
  {
      "market_id": 322474,
      "vendor_id": 54861
  }
 ```
 It will add that vendor to that market's list of vendors. The response is a message stating the vendor has been successfully added.
-```
+```json
    {
      "message": "Successfully added vendor to market"
    }
@@ -268,7 +268,7 @@ It will add that vendor to that market's list of vendors. The response is a mess
 `DELETE /api/v0/market_vendors`
 
 When a valid market id and vendor id is passed through the body as shown below, and an association between that market and vendor exists, it will remove that vendor from that market's vendor list.
-```
+```json
  {
      "market_id": 322474,
      "vendor_id": 54861
@@ -287,7 +287,7 @@ If valid search parameters are passed, the response will return any and all matc
 `GET /api/v0/markets/:id/nearest_atms`
 
 This endpoint consumes the TomTom API to return a list of cash dispensers close to the given market, ordered by distance from that market.
-```
+```json
 {
      "data": [
          {
@@ -328,7 +328,7 @@ Returns a list of vendors that sell at markets in more than one state. Vendors a
 
 Returns a list of states, with a number of vendors that sell in that state, in order by the total number of vendors.
 This endpoint accepts an optional param of `limit` to return a certain number of states (ex: `api/v0/vendors/popular_states?limit=5`)
-```
+```json
 {
  "data": [
           {
@@ -347,13 +347,15 @@ This endpoint accepts an optional param of `limit` to return a certain number of
               "state": "Michigan", 
               "number_of_vendors": 68
           },
-  ...
-  ...
+        ...
+        ...
+        ]
+}
 ```
 
 ## Running On
-Ruby 3.2.2
-Rails 7.0.7.2
+- Ruby 3.2.2
+- Rails 7.0.7.2
 
 ## Make a Local Copy
 1. Fork this repo
@@ -367,6 +369,7 @@ bundle install
 rails db:{create,migrate,seed}
 ```
 5. Set up Rails credentials
+
 You will need to get a [TomTom API](https://developer.tomtom.com/) key.
 When you have a key, run `EDITOR="code --wait" bin/rails credentials:edit` in the command line to open the credentials file. You may need to delete the existing `credentials.yml.enc` file.
 In the opened credentials file, input your key in the following format:
