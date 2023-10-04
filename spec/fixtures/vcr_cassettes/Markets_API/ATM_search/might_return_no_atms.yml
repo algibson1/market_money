@@ -19,7 +19,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 31 Aug 2023 23:36:20 GMT
+      - Wed, 04 Oct 2023 22:07:22 GMT
       Content-Type:
       - application/json; charset=utf-8
       Vary:
@@ -27,13 +27,13 @@ http_interactions:
       Access-Control-Allow-Origin:
       - "*"
       Tracking-Id:
-      - 32c3b11f-1345-4651-9428-d1e3e0d8d9e8
+      - f28fa562-e63e-4621-9960-d408fd851c14
       Access-Control-Expose-Headers:
       - Tracking-ID
       X-Apigee.target-Latency:
-      - '7'
+      - '19'
       X-Envoy-Upstream-Service-Time:
-      - '18'
+      - '30'
       Server:
       - tomtom
       X-Tomtom-Processed-By:
@@ -42,6 +42,6 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"summary":{"queryType":"NEARBY","queryTime":5,"numResults":0,"offset":0,"totalResults":0,"fuzzyLevel":2,"geoBias":{"lat":5,"lon":-130},"geobiasCountry":"UM"},"results":[]}'
-  recorded_at: Thu, 31 Aug 2023 23:36:20 GMT
+      string: '{"summary":{"queryType":"NEARBY","queryTime":17,"numResults":0,"offset":0,"totalResults":0,"fuzzyLevel":2,"geoBias":{"lat":5,"lon":-130},"geobiasCountry":"UM"},"results":[]}'
+  recorded_at: Wed, 04 Oct 2023 22:07:22 GMT
 recorded_with: VCR 6.2.0
